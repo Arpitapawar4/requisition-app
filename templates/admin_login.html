@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card" style="max-width:420px;margin:auto"><h1>Admin login</h1>
+{% if disabled %}<p class="msg">Admin login is disabled because no ADMIN_PASSWORD is set on the server.</p>
+{% else %}<form method="post"><label for="password">Password</label><input type="password" id="password" name="password" autofocus>
+<p><button class="btn" type="submit">Login</button></p></form>{% endif %}</div>
+{% endblock %}

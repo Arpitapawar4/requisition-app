@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% macro field(name, label) %}
+<div class="{{ 'err' if errors.get(name) }}"><label class="req" for="{{ name }}">{{ label }}</label>{{ caller() }}{% if errors.get(name) %}<div class="msg">{{ errors[name] }}</div>{% endif %}</div>
+{% endmacro %}
+{% block content %}
+<form method="post" enctype="multipart/form-data" novalidate>
+<div class="card">
+  <h1>Student Academic Requisition Form</h1>
+  <p class="note"><b>Processing Time:</b> The request will normally be processed within 4 working days after receiving the completed form and all required supporting documents. Apply in advance, as incomplete applications may require additional time.</p>
+</div>
+
+<div class="card"><h2>1. Student Details</h2>
+<div class="grid">
+{% call field('department','Name of Department') %}<input type="text" id="department" name="department" value="{{ form.department }}">{% endcall %}
+{% call field('student_name','Student Name') %}<input type="text" id="student_name" name="student_name" value="{{ form.student_name }}">{% endcall %}
+{% call field('roll_no','Roll Number') %}<input type="text" id="roll_no" name="roll_no" value="{{ form.roll_no }}">{% endcall %}
+{% call field('semester','Semester') %}<select id="semester" name="semester"><option value="">Select</option>{% for s in semesters %}<option {{ 'selected' if form.semester==s }}>{{ s }}</option>{% endfor %}</select>{% endcall %}
+{% call field('division','Division') %}<input type="text" id="division" name="division" value="{{ form.division }}" maxlength="3">{% endcall %}
+{% call field('email','Email') %}<input type="email" id="email" name="email" value="{{ form.email }}">{% endcall %}
+{% call field('mobile','Mobile Number') %}<input type="text" id="mobile" name="mobile" value="{{ form.mobile }}" inputmode="numeric" maxlength="10" placeholder="10-digit number">{% endcall %}
+{% call field('date','Date') %}<input type="date" id="date" name="date" value="{{ form.date }}">{% endcall %}
+</div>
+<div style="margin-top:14px" class="{{ 'err' if errors.get('app_type') }}">
+  <label class="req" for="app_type">Application for</label>
+  <select id="app_type" name="app_type"><option value="">Select application type</option>{% for t in types %}<option {{ 'selected' if form.app_type==t }}>{{ t }}</option>{% endfor %}</select>
+  {% if errors.get('app_type') %}<div class="msg">{{ errors['app_type'] }}</div>{% endif %}
+</div></div>
+
+<div class="card {{ 'err' if errors.get('purpose') }}"><h2>2. Purpose / Brief Details of Request</h2>
+<textarea name="purpose" id="purpose" rows="4" maxlength="450" placeholder="Describe your request (max 450 characters)">{{ form.purpose }}</textarea>
+{% if errors.get('purpose') %}<div class="msg">{{ errors['purpose'] }}</div>{% endif %}</div>
+
+<div class="card"><h2>3. Supporting Documents</h2>
+<div class="radios {{ 'err' if errors.get('docs_attached') }}"><label>Documents attached:</label>
+<label><input type="radio" name="docs_attached" value="Yes" {{ 'checked' if form.docs_attached=='Yes' }}> Yes</label>
+<label><input type="radio" name="docs_attached" value="No" {{ 'checked' if form.docs_attached!='Yes' }}> No</label>
+{% if errors.get('docs_attached') %}<div class="msg">{{ errors['docs_attached'] }}</div>{% endif %}</div>
+<div id="docs" class="grid" style="margin-top:12px">
+ <div class="{{ 'err' if errors.get('doc_names') }}"><label for="doc_names">Document name(s), if applicable</label>
+ <input type="text" id="doc_names" name="doc_names" value="{{ form.doc_names }}" placeholder="e.g. Fee receipt, ID card copy">
+ {% if errors.get('doc_names') %}<div class="msg">{{ errors['doc_names'] }}</div>{% endif %}</div>
+ <div class="{{ 'err' if errors.get('documents') }}"><label for="documents">Upload documents (PDF/JPG/PNG, max 5 MB each)</label>
+ <input type="file" id="documents" name="documents" multiple accept=".pdf,.jpg,.jpeg,.png">
+ {% if errors.get('documents') %}<div class="msg">{{ errors['documents'] }}</div>{% endif %}</div>
+</div></div>
+
+<div class="card {{ 'err' if errors.get('declaration') }}"><h2>4. Student Declaration</h2>
+<div class="decl">{{ declaration }}</div>
+<label style="font-weight:500"><input type="checkbox" name="declaration" {{ 'checked' if declared }}> I accept the above declaration.</label>
+{% if errors.get('declaration') %}<div class="msg">{{ errors['declaration'] }}</div>{% endif %}
+<p class="note" style="margin-top:12px">HoD and Principal sections are left blank in the PDF for institute use. Sign the printed form in the "Student Signature" space.</p>
+<button class="btn" type="submit">Generate PDF</button></div>
+</form>
+<script>
+(function(){var d=document.getElementById('docs');function f(){var y=document.querySelector('input[name=docs_attached][value=Yes]').checked;d.style.display=y?'grid':'none';}
+var dt=document.getElementById('date');if(dt&&!{{ 'true' if request.method=='POST' else 'false' }}){var n=new Date();dt.value=n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0');}
+document.querySelectorAll('input[name=docs_attached]').forEach(function(r){r.addEventListener('change',f)});f();})();
+</script>
+{% endblock %}

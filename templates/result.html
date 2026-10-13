@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card"><h1>Requisition submitted</h1>
+<p class="note">Your requisition number is <b>{{ r.req_no }}</b>. Keep it to track the status later.</p>
+<dl>
+<dt>Student</dt><dd>{{ r.student_name }} ({{ r.roll_no }})</dd>
+<dt>Department</dt><dd>{{ r.department }} &middot; Sem {{ r.semester }} &middot; Div {{ r.division }}</dd>
+<dt>Application for</dt><dd>{{ r.app_type }}</dd>
+<dt>Date</dt><dd>{{ r.req_date }}</dd>
+<dt>Status</dt><dd><span class="badge {{ r.status }}">{{ r.status }}</span></dd>
+</dl>
+<p style="margin-top:18px"><a class="btn" href="{{ url_for('download', req_no=r.req_no) }}">Download PDF</a>
+<a class="btn alt" href="{{ url_for('index') }}">New requisition</a></p>
+<p class="note">File name: {{ filename }}. Print it, sign it, and submit it with your documents.</p></div>
+{% endblock %}

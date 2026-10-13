@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card"><h1>Admin dashboard <a class="btn alt small" style="float:right" href="{{ url_for('admin_logout') }}">Logout</a></h1></div>
+<div class="stats"><div class="stat"><b>{{ total }}</b><span>Total</span></div>
+{% for s in statuses %}<div class="stat"><b>{{ counts.get(s,0) }}</b><span>{{ s }}</span></div>{% endfor %}</div>
+<div class="card"><form method="get" class="filters">
+<div><label for="q">Search</label><input type="text" id="q" name="q" value="{{ q }}" placeholder="Name, roll no., department or requisition no."></div>
+<div><label for="status">Status</label><select id="status" name="status"><option value="">All</option>{% for s in statuses %}<option {{ 'selected' if s==status }}>{{ s }}</option>{% endfor %}</select></div>
+<div><label for="app_type">Type</label><select id="app_type" name="app_type"><option value="">All</option>{% for t in types %}<option {{ 'selected' if t==app_type }}>{{ t }}</option>{% endfor %}</select></div>
+<button class="btn" type="submit">Search</button></form></div>
+<div class="card scroll"><table>
+<tr><th>Req. No.</th><th>Student</th><th>Roll</th><th>Dept / Sem / Div</th><th>Contact</th><th>Type</th><th>Date</th><th>Files</th><th>Status</th><th>PDF</th></tr>
+{% for r in rows %}<tr>
+<td>{{ r.req_no }}</td><td>{{ r.student_name }}</td><td>{{ r.roll_no }}</td><td>{{ r.department }} / {{ r.semester }} / {{ r.division }}</td>
+<td>{{ r.email }}<br>{{ r.mobile }}</td><td>{{ r.app_type }}</td><td>{{ r.req_date }}</td>
+<td>{% for f in uploaded_files(r.req_no) %}<a href="{{ url_for('admin_file', req_no=r.req_no, name=f) }}" target="_blank">{{ f }}</a><br>{% else %}&ndash;{% endfor %}</td>
+<td><form method="post" action="{{ url_for('admin_status', req_no=r.req_no) }}" style="display:flex;flex-direction:column;gap:4px;align-items:flex-start">
+<select name="status">{% for s in statuses %}<option {{ 'selected' if s==r.status }}>{{ s }}</option>{% endfor %}</select><button class="btn small" type="submit">Save</button></form></td>
+<td><a href="{{ url_for('download', req_no=r.req_no) }}">PDF</a></td></tr>
+{% else %}<tr><td colspan="10">No requisitions found.</td></tr>{% endfor %}
+</table></div>
+{% endblock %}

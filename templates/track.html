@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card"><h1>Track application status</h1>
+<form method="post" class="filters" style="grid-template-columns:1fr auto">
+<div><label for="req_no">Requisition number</label><input type="text" id="req_no" name="req_no" value="{{ req_no }}" placeholder="REQ-2026-0001"></div>
+<button class="btn" type="submit">Check</button></form></div>
+{% if searched %}<div class="card">
+{% if r %}<h2>{{ r.req_no }}</h2>
+<div class="steps">{% for s in statuses %}<span class="step {{ 'on' if s==r.status }}">{{ s }}</span>{% endfor %}</div>
+<dl><dt>Student</dt><dd>{{ r.student_name }} ({{ r.roll_no }})</dd><dt>Application for</dt><dd>{{ r.app_type }}</dd><dt>Date</dt><dd>{{ r.req_date }}</dd>
+<dt>Current status</dt><dd><span class="badge {{ r.status }}">{{ r.status }}</span></dd></dl>
+<p style="margin-top:14px"><a class="btn alt small" href="{{ url_for('download', req_no=r.req_no) }}">Download PDF again</a></p>
+{% else %}<p class="msg">No requisition found with number "{{ req_no }}".</p>{% endif %}</div>{% endif %}
+{% endblock %}
